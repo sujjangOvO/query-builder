@@ -1,4 +1,4 @@
-package Builder.domain;
+package domain;
 
 public class User {
 	int no;

@@ -2,6 +2,8 @@ package jdbc;
 
 import java.sql.*;
 
+import domain.User;
+
 public class Jdbc {
 
 
