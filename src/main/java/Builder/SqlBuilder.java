@@ -1,7 +1,7 @@
 package Builder;
 
-import Builder.Where.Where;
-import Builder.Where.WhereBuilder;
+import Builder.where.Where;
+import Builder.where.WhereBuilder;
 
 public class SqlBuilder {
 	public static void main(String[] args) {

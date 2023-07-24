@@ -1,4 +1,4 @@
-package Builder.Where;
+package Builder.where;
 
 public class Condition {
 	String column;
