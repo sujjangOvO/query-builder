@@ -1,5 +1,3 @@
-package jdbc;
-
 import java.sql.*;
 
 import domain.User;
