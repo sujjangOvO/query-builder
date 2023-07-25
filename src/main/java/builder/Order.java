@@ -7,42 +7,52 @@ import java.util.List;
 public class Order {
 	private static final String DESC = "DESC";
 	private static final String ASC = "ASC";
-	private final List<SortCondition> sortConditions;
+	private final List<Sort> sorts;
+	private final String query;
 
-	private Order(List<SortCondition> sortConditions) {
-		this.sortConditions = sortConditions;
+	private Order(List<Sort> sorts) {
+		this.sorts = sorts;
+		this.query = generateQuery();
 	}
 
-	public String toQuery() {
+	private String generateQuery() {
 		List<String> queries = new ArrayList<>();
-		for(SortCondition sortCondition: sortConditions) {
-			queries.add(sortCondition.toQuery());
+
+		for(Sort sort : sorts) {
+			queries.add(sort.getQuery());
 		}
 
 		return String.join(", ", queries);
 	}
 
-	public static class Builder {
-		private final List<SortCondition> sortConditions;
+	public String getQuery() {
+		return this.query;
+	}
 
-		public Builder() {
-			this.sortConditions = new ArrayList<>();
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	public static class Builder {
+		private final List<Sort> sorts  = new ArrayList<>();
+
+		private Builder() {
 		}
 
 		public Builder asc(String column) {
-			SortCondition asc = SortCondition.asc(column);
-			sortConditions.add(asc);
+			Sort asc = Sort.asc(column);
+			sorts.add(asc);
 			return this;
 		}
 
 		public Builder desc(String column) {
-			SortCondition desc = SortCondition.desc(column);
-			sortConditions.add(desc);
+			Sort desc = Sort.desc(column);
+			sorts.add(desc);
 			return this;
 		}
 
 		public Order build() {
-			return new Order(sortConditions);
+			return new Order(sorts);
 		}
 	}
 }
