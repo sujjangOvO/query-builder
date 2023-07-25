@@ -6,14 +6,25 @@ public class Condition {
 
 	private final String logicOperation;
 	private final Operator operator;
+	private final String query;
 
-	public String getLogicOperation() {
-		return logicOperation;
+	public Condition(Operator operator) {
+		this(null, operator);
 	}
 
 	private Condition(String logicOperation, Operator operator) {
 		this.logicOperation = logicOperation;
 		this.operator = operator;
+		this.query = generateQuery(logicOperation, operator);
+	}
+
+	private String generateQuery(String logicOperation, Operator operator) {
+		String logicOperationText = logicOperation == null ? "" : logicOperation;
+		return "%s %s".formatted(logicOperationText, operator.getQuery()).trim();
+	}
+
+	public String getQuery() {
+		return this.query;
 	}
 
 	public static Condition or(Operator operator) {
@@ -23,14 +34,5 @@ public class Condition {
 	public static Condition and(Operator operator) {
 		return new Condition(AND, operator);
 	}
-
-	public String firstQuery() {
-		return operator.toQuery();
-	}
-
-	public String toQuery() {
-		return "%s %s".formatted(logicOperation, operator.toQuery());
-	}
-
 
 }

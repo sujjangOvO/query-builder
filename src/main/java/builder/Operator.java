@@ -4,15 +4,21 @@ public class Operator {
 	private final String column;
 	private final Type type;
 	private final Object value;
+	private final String query;
 
 	public Operator(String column, Type type, Object value) {
 		this.column = column;
 		this.type = type;
 		this.value = value;
+		this.query = generateQuery();
 	}
 
-	public String toQuery() {
-		return "%s %s %s".formatted(column, type.getSymbol(), value);
+	private String generateQuery() {
+		return "%s %s %s".formatted(this.column, this.type.getSymbol(), this.value);
+	}
+
+	public String getQuery() {
+		return this.query;
 	}
 
 	public enum Type {
@@ -23,7 +29,7 @@ public class Operator {
 		LT("<"),
 		LTE("<=");
 
-		private String symbol;
+		private final String symbol;
 
 		Type(String symbol) {
 			this.symbol = symbol;
