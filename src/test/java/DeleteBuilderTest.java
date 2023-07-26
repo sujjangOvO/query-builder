@@ -7,7 +7,7 @@ import builder.Where;
 
 class DeleteBuilderTest {
 	@Test
-	void DeleteBuilder_Test() {
+	void deleteBuilder_test() {
 		Delete delete = Delete.builder()
 			.from(Tables.USER)
 			.build();
@@ -16,7 +16,7 @@ class DeleteBuilderTest {
 	}
 
 	@Test
-	void DeleteBuilderWithWhere_Test() {
+	void deleteBuilder_where_test() {
 		Delete delete = Delete.builder()
 			.from(Tables.USER)
 			.where(
