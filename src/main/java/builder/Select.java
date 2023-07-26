@@ -7,9 +7,9 @@ import java.util.List;
 public class Select {
 	private final List<String> columns;
 	private final Tables table;
-	private Where where;
-	private Order order;
-	private String query;
+	private final Where where;
+	private final Order order;
+	private final String query;
 
 	private Select(List<String> columns, Tables table, Where where, Order order) {
 		this.columns = columns;
@@ -24,11 +24,7 @@ public class Select {
 		String whereQuery = this.where == null ? "" : String.format(" WHERE %s", this.where.getQuery());
 		String orderQuery = this.order == null ? "" : String.format(" ORDER BY %s", this.order.getQuery());
 
-		return "SELECT %s FROM %s".formatted(column, getTableName() + whereQuery + orderQuery);
-	}
-
-	private String getTableName() {
-		return this.table.name().toLowerCase();
+		return "SELECT %s FROM %s".formatted(column, this.table.getTableName() + whereQuery + orderQuery);
 	}
 
 	public String getQuery() {

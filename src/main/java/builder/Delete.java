@@ -1,9 +1,9 @@
 package builder;
 
 public class Delete {
-	private Tables table;
-	private Where where;
-	private String query;
+	private final Tables table;
+	private final Where where;
+	private final String query;
 
 	public Delete(Tables table, Where where) {
 		this.table = table;
@@ -13,11 +13,7 @@ public class Delete {
 
 	private String generateQuery() {
 		String whereQuery = where == null ? "" : "WHERE %s".formatted(where.getQuery());
-		return "DELETE FROM %s %s".formatted(getTableName(),whereQuery);
-	}
-
-	private String getTableName() {
-		return this.table.name().toLowerCase();
+		return "DELETE FROM %s %s".formatted(this.table.getTableName(),whereQuery);
 	}
 
 	public String getQuery() {
