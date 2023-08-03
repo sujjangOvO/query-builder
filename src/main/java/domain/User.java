@@ -1,6 +1,6 @@
 package domain;
 
-public class User {
+public class User implements Entity {
 	int no;
 	String name;
 	int age;

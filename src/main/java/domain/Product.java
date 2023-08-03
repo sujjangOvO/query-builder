@@ -1,6 +1,6 @@
 package domain;
 
-public class Product {
+public class Product implements Entity{
 	int id;
 	String name;
 	long price;
