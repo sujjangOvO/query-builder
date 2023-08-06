@@ -1,60 +1,62 @@
 package builder;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import domain.Entity;
+
 import java.util.List;
+import java.util.Map;
 
 public class Insert {
-	private final Tables table;
-	private final List<String> columns;
-	private final List<String> values;
+	private final Class<? extends Entity> table;
+	private Map<String, Object> values;
 	private final String query;
 
-	public Insert(Tables table, List<String> columns, List<String> values) {
+	public Insert(Class<? extends Entity> table, Map<String, Object> values) {
 		this.table = table;
-		this.columns = columns;
 		this.values = values;
 		this.query = generateQuery();
 	}
 
 	private String generateQuery() {
-		String columns = String.join(",", this.columns);
-		String values = String.join(",", this.values);
-		return "INSERT INTO %s(%s) VALUES (%s)".formatted(this.table.getTableName(), columns, values);
+		List<String> columnSet = this.values.entrySet()
+				.stream()
+				.map(Map.Entry::getKey)
+				.toList();
+
+		List<String> valueSet = this.values.entrySet()
+				.stream()
+				.map(Map.Entry::getValue)
+				.map(value -> {
+					if (value instanceof String) {
+						return String.format("\'%s\'", value);
+					}
+
+					return value.toString();
+				})
+				.toList();
+
+		String columns = String.join(", ", columnSet);
+		String values = String.join(", ", valueSet);
+		String tableName = this.table.getSimpleName().toLowerCase();
+		return "INSERT INTO %s (%s) VALUES (%s)".formatted(tableName, columns, values);
 	}
 
 	public String getQuery() {
 		return this.query;
 	}
 
-	public static Builder builder(Tables table) {
-		return new Builder(table);
+	public static InsertCriteria into(Class<? extends Entity> table) {
+		return new InsertCriteria(table);
 	}
 
-	public static class Builder {
-		private Tables table;
-		private List<String> columns;
-		private List<String> values;
+	public static class InsertCriteria {
+		private final Class<? extends Entity> table;
 
-		private Builder(Tables table) {
+		private InsertCriteria(Class<? extends Entity> table) {
 			this.table = table;
-			columns = new ArrayList<>();
-			values = new ArrayList<>();
 		}
 
-		public Builder column(String... columns) {
-			Collections.addAll(this.columns, columns);
-			return this;
+		public Insert values(Map<String, Object> values) {
+			return new Insert(this.table, values);
 		}
-
-		public Builder values(String... values) {
-			Collections.addAll(this.values, values);
-			return this;
-		}
-
-		public Insert build() {
-			return new Insert(table, columns, values);
-		}
-
 	}
 }
