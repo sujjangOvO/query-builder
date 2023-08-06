@@ -1,54 +1,65 @@
 package builder;
 
+import domain.Entity;
+
 public class Delete {
-	private final Tables table;
-	private final Where where;
-	private final String query;
+    private final Class<? extends Entity> table;
+    private final Where where;
+    private final String query;
 
-	public Delete(Tables table, Where where) {
-		this.table = table;
-		this.where = where;
-		this.query = generateQuery();
-	}
+    private Delete(Class<? extends Entity> table, Where where) {
+        this.table = table;
+        this.where = where;
+        this.query = generateQuery();
+    }
 
-	private String generateQuery() {
-		String whereQuery = where == null ? "" : "WHERE %s".formatted(where.getQuery());
-		return "DELETE FROM %s %s".formatted(this.table.getTableName(),whereQuery);
-	}
+    private Delete(Class<? extends Entity> table) {
+        this(table, null);
+    }
 
-	public String getQuery() {
-		return this.query;
-	}
+    private String generateQuery() {
+        String whereQuery = where == null ? "" : "WHERE %s".formatted(where.getQuery());
+        String tableName = this.table.getSimpleName().toLowerCase();
+        return "DELETE FROM %s ".formatted(tableName) + whereQuery;
+    }
 
-	public static Builder builder() {
-		return new Builder();
-	}
+    public String getQuery() {
+        return this.query;
+    }
 
-	public static class Builder {
-		private Tables table;
-		private Where where;
+    public static DeleteCriteria from(Class<? extends Entity> table) {
+        return new DeleteCriteria(table);
+    }
 
-		 private Builder() {
-			where = null;
-		}
+    public static class DeleteCriteria {
+        private final Class<? extends Entity> table;
 
-		public Builder from(Tables table) {
-			 this.table = table;
-			 return this;
-		}
+        private DeleteCriteria(Class<? extends Entity> table) {
+            this.table = table;
+        }
 
-		public Builder where(Where where) {
-			 this.where = where;
-			 return this;
-		}
+        public OrderCriteria where(Where where) {
+            return new OrderCriteria(table, where);
+        }
 
-		public Delete build() {
-			 return new Delete(table, where);
-		}
+        public Delete build() {
+            return new Delete(table);
+        }
 
-	}
+    }
 
+    public static class OrderCriteria {
+        private final Class<? extends Entity> table;
+        private Where where;
 
+        public OrderCriteria(Class<? extends Entity> table, Where where) {
+            this.table = table;
+            this.where = where;
+        }
 
+        public Delete build() {
+            return new Delete(this.table, this.where);
+        }
 
+    }
 }
