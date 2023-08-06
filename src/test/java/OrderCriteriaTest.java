@@ -3,7 +3,7 @@ import org.junit.jupiter.api.Test;
 
 import builder.Order;
 
-class OrderBuilderTest {
+class OrderCriteriaTest {
 	@Test
 	void Order빌더_조건1개_테스트() {
 		Order order = Order.builder()

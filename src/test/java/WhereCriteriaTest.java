@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import builder.Where;
 
 
-class WhereBuilderTest {
+class WhereCriteriaTest {
 
 	@Test
 	void Where빌더_조건1개_테스트() {
