@@ -1,57 +1,94 @@
 package builder;
 
+import domain.Entity;
+
 public class Update {
-	private final Tables table;
-	private final Operator operator;
-	private final Where where;
-	private final String query;
+    private final Class<? extends Entity> table;
+    private final Operator operator;
+    private final Where where;
+    private final String query;
 
-	public Update(Tables table, Operator operator, Where where) {
-		this.table = table;
-		this.operator = operator;
-		this.where = where;
-		this.query = generateQuery();
-	}
+    private Update(Class<? extends Entity> table, Operator operator, Where where) {
+        this.table = table;
+        this.operator = operator;
+        this.where = where;
+        this.query = generateQuery();
+    }
 
-	private String generateQuery() {
-		String whereQuery = where == null ? "" : String.format(" WHERE %s", where.getQuery());
-		return "UPDATE %s SET %s".formatted(this.table.getTableName(), operator.getQuery()) + whereQuery;
-	}
+    private Update(Class<? extends Entity> table, Operator operator) {
+        this(table, operator, null);
+    }
 
-	public String getQuery() {
-		return this.query;
-	}
+    private String generateQuery() {
+        String tableName = this.table.getSimpleName().toLowerCase();
+        String whereQuery = where == null ? "" : String.format(" WHERE %s", where.getQuery());
+        return "UPDATE %s SET %s".formatted(tableName, operator.getQuery()) + whereQuery;
+    }
 
-	public static Builder builder() {
-		return new Builder();
-	}
+    public String getQuery() {
+        return this.query;
+    }
 
-	public static class Builder {
-		private Tables table;
-		private Operator operator;
-		private Where where;
+    public static UpdateCriteria builder() {
+        return new UpdateCriteria();
+    }
 
-		private Builder() {
-			this.where = null;
-		}
+    public static class UpdateCriteria {
+        private Class<? extends Entity> table;
 
-		public Builder update(Tables table) {
-			this.table = table;
-			return this;
-		}
+        public SetCriteria update(Class table) {
+            this.table = table;
+            return new SetCriteria(table);
+        }
+    }
 
-		public Builder set(String column, Object value) {
-			this.operator = new Operator(column, Operator.Type.EQ, value);
-			return this;
-		}
+    public static class SetCriteria {
+        private final Class<? extends Entity> table;
+        private Operator operator;
 
-		public Builder where(Where where) {
-			this.where = where;
-			return this;
-		}
+        private SetCriteria(Class<? extends Entity> table) {
+            this.table = table;
+        }
 
-		public Update build() {
-			return new Update(table, operator, where);
-		}
-	}
+        public WhereCriteria set(String column, Object value) {
+            this.operator = new Operator(column, Operator.Type.EQ, value);
+            return new WhereCriteria(table, operator);
+        }
+    }
+
+    public static class WhereCriteria {
+        private final Class<? extends Entity> table;
+        private final Operator operator;
+        private Where where;
+
+        private WhereCriteria(Class<? extends Entity> table, Operator operator) {
+            this.table = table;
+            this.operator = operator;
+        }
+
+        public Builder where(Where where) {
+            this.where = where;
+            return new Builder(this.table, this.operator, this.where);
+        }
+
+        public Update build() {
+            return new Update(table, operator);
+        }
+    }
+
+    public static class Builder {
+        private final Class<? extends Entity> table;
+        private final Operator operator;
+        private final Where where;
+
+        private Builder(Class<? extends Entity> table, Operator operator, Where where) {
+            this.table = table;
+            this.operator = operator;
+            this.where = where;
+        }
+
+        public Update build() {
+            return new Update(table, operator, where);
+        }
+    }
 }
