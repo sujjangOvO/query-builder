@@ -1,18 +1,18 @@
 import static builder.Operator.Type.*;
 
+import domain.User;
 import org.junit.jupiter.api.Test;
 
 import builder.Order;
 import builder.Select;
-import builder.Tables;
 import builder.Where;
 
-class SelectBuilderTest {
+class SelectCriteriaTest {
 	@Test
 	void selectBuilder_test() {
 		Select select = Select.builder()
 			.select("age", "no")
-			.from(Tables.USER)
+			.from(User.class)
 			.where(
 				Where
 					.builder("no", EQ, 2)
