@@ -5,8 +5,6 @@ import java.util.List;
 
 
 public class Order {
-	private static final String DESC = "DESC";
-	private static final String ASC = "ASC";
 	private final List<Sort> sorts;
 	private final String query;
 
